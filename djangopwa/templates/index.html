@@ -1,0 +1,56 @@
+{% load pwa %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    {% progressive_web_app_meta %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+
+    <h1>Home Page</h1>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque, praesentium magni explicabo sint iure omnis.</p>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/js/serviceworker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered with scope:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.error('Service Worker registration failed:', error);
+                    });
+            });
+        }
+
+        // Prompt the user to install the PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            const installButton = document.getElementById('install-button');
+
+            installButton.style.display = 'block';
+
+            installButton.addEventListener('click', () => {
+                e.prompt();
+                e.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the PWA installation');
+                        installButton.style.display = 'none';
+                    } else {
+                        console.log('User declined the PWA installation');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Install button -->
+    <button id="install-button" style="display: none;">Install the App</button>
+
+    
+</body>
+</html>
